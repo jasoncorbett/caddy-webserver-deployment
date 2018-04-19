@@ -1,0 +1,47 @@
+:80 {
+    root /var/www/html
+    log /var/log/caddy/http-80.log
+    internal /multicraft/private
+    
+    fastcgi /multicraft unix:/run/php/php7.0-fpm.sock {
+        php
+    }
+}
+
+http://build.tcrun.org {
+    redir https://build.tcrun.org{uri}
+}
+
+http://build.slickqa.com {
+    redir https://build.slickqa.com{uri}
+}
+
+https://build.tcrun.org https://build.slickqa.com {
+    proxy / http://localhost:8080/ {
+        transparent
+    }
+    log /var/log/caddy/build.slickqa.com.log
+}
+
+http://demo.slickqa.com {
+   redir https://demo.slickqa.com{uri}
+}
+
+https://demo.slickqa.com {
+    proxy / https://localhost:8888/ {
+        transparent
+        insecure_skip_verify
+    }
+    log /var/log/caddy/demo.slickqa.com.log
+}
+
+http://storage.slickqa.com {
+    redir https://storage.slickqa.com{uri}
+}
+
+https://storage.slickqa.com {
+    proxy / http://127.0.0.1:9000/ {
+        transparent
+    }
+    log /var/log/caddy/storage.slickqa.com.log
+}
